@@ -1,6 +1,7 @@
 ThundeaL TD80Pro and be30a3/txhd2 clones: HDMI input lag from ~150 ms down to ~20–40 ms, plus real 60fps. No flashing, ADB only
 
 [readme ru](readme_ru.md)
+
 Tested on firmware build 20251112154138.
 
 Platform: Amlogic txhd2, board be30a3, Android 13 (SDK 33). The firmware is userdebug/test-keys — root via adb root, no bootloader unlock needed. Should apply to every clone of this ODM (Stellamore STM930/T950S family: ThundeaL, Tandil, WZATCO, etc.). Verify yours with adb shell getprop ro.board.platform (txhd2) and ro.product.board (be30a3).
