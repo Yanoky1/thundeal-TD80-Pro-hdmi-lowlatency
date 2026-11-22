@@ -2,6 +2,16 @@ ThundeaL TD80Pro and be30a3/txhd2 clones: HDMI input lag from ~150 ms down to ~2
 
 [readme ru](readme_ru.md)
 
+I found a way to reduce the lag on the HDMI input (for example PC, PlayStation or Xbox into a projector for gaming). Below are the instructions and a photo of my tests. I got the lag from 150 milliseconds down to 50 and the framerate from 30 up to 60 frames per second.
+
+I'm not sure the same trick will work on other projector models, but in theory the approach to limiting the output frame rate can be similar — AI can help.
+
+!!!!
+
+I am not responsible for a broken device, I am only describing how it worked out for me and what the result was.
+
+!!!!
+
 Tested on firmware build 20251112154138.
 
 Platform: Amlogic txhd2, board be30a3, Android 13 (SDK 33). The firmware is userdebug/test-keys — root via adb root, no bootloader unlock needed. Should apply to every clone of this ODM (Stellamore STM930/T950S family: ThundeaL, Tandil, WZATCO, etc.). Verify yours with adb shell getprop ro.board.platform (txhd2) and ro.product.board (be30a3).
