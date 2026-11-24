@@ -35,13 +35,13 @@ ThundeaL TD80Pro и клоны на плате be30a3: задержка HDMI-в�
 На проекторе включите режим разработчика, отладку по сети и разрешите ADB. На компьютере, с которого будут идти команды (у меня Windows), распакуйте platform-tools, запустите консоль из этой папки, введите adb connect IP-проектора:5555, затем adb devices — проектор должен появиться в списке. Если что-то пойдёт не по плану — Google в помощь.
 
 Быстрая диагностика стока
-
+```
 adb shell "cat /sys/class/video/vframe_states | grep delayed"   → 68–72 мс
 adb shell "cat /sys/class/dummy_venc/encp_projector_fps"        → 1
 adb shell "cd /sys/module/aml_media/parameters; a=$(cat vsync_count); sleep 10; c=$(cat vsync_count); echo vsync_per_s=$(( (c-a)/10 ))"  → 30
-
+```
 Разовый запуск (для проверки; перезагрузка откатывает всё)
-
+```
 @echo off
 adb root
 adb shell "echo 0 > /sys/class/dummy_venc/encp_projector_fps"
@@ -56,7 +56,7 @@ adb shell "echo 1 > /sys/module/aml_media/parameters/freerun_en"
 adb shell "echo 1 > /sys/class/video/freerun_mode"
 adb shell "echo 0 > /sys/class/dummy_venc/encp_projector_fps"
 adb shell "cat /sys/class/video/vframe_states | grep delayed"
-
+```
 Контроль после: delayed ≈ 44, флаг 0, vsync_per_s=60.
 
 Профили
@@ -75,7 +75,7 @@ adb shell "cat /sys/class/video/vframe_states | grep delayed"
 Всё выше — sysfs: после ребута сбрасывается, а tvserver при открытии HDMI заново вписывает свои 73 мс. Поэтому я поставил себе сервис: тяжёлые ручки применяются один раз, остальное держит цикл.
 
 lowlat.sh:
-
+```
 #!/system/bin/sh
 echo 1 > /sys/module/aml_media/parameters/pc_mode_en
 echo 1 > /sys/module/aml_media/parameters/vdin_pc_mode
@@ -91,9 +91,10 @@ while true; do
   echo 0 > /sys/class/video/enable_hdmi_delay_normal_check
   sleep 1
 done
-
+```
 lowlat.rc:
 
+```
 service lowlat /system/bin/sh /data/local/tmp/lowlat.sh
     user root
     group root
@@ -101,9 +102,11 @@ service lowlat /system/bin/sh /data/local/tmp/lowlat.sh
 
 on property:sys.boot_completed=1
     start lowlat
+```
 
 Установка:
 
+```
 adb root
 adb shell "mount -o remount,rw /vendor"
 adb push lowlat.sh /data/local/tmp/lowlat.sh
@@ -111,6 +114,7 @@ adb push lowlat.rc /vendor/etc/init/lowlat.rc
 adb shell "sed -i 's/\r$//' /data/local/tmp/lowlat.sh /vendor/etc/init/lowlat.rc"
 adb shell "chmod 755 /data/local/tmp/lowlat.sh; chmod 644 /vendor/etc/init/lowlat.rc"
 adb reboot
+```
 
 Проверка через минуту после загрузки (при открытом HDMI): adb shell "pgrep -f lowlat" даёт PID; флаг 0; delayed ≈ 44; vsync_per_s=60.
 
